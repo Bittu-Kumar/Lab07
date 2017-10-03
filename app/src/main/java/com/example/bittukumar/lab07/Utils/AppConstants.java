@@ -1,8 +1,6 @@
-package com.example.epuser.pickcontacts.common;
+package com.example.bittukumar.lab07.Utils;
 
-/**
- * Created by Viral on 25-05-2017.
- */
+
 
 public class AppConstants {
 

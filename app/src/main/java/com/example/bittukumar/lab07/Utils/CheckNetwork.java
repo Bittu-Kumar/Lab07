@@ -1,11 +1,9 @@
-package com.example.epuser.pickcontacts.network;
+package com.example.bittukumar.lab07.Utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-
-
 
 
 public class CheckNetwork {

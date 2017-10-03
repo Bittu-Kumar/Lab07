@@ -1,37 +1,33 @@
-package com.example.epuser.pickcontacts.network;
+package com.example.bittukumar.lab07.Utils;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.epuser.pickcontacts.R;
-import com.example.epuser.pickcontacts.common.AppConstants;
-import com.example.epuser.pickcontacts.exceptions.InternetNotAvailableException;
-import com.example.epuser.pickcontacts.widget.EPProgressDialog;
+import com.example.bittukumar.lab07.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.android.volley.VolleyLog.TAG;
 
-/**
- * Created by ADMIN on 7/18/2016.
- */
+
 public class VolleyJsonRequest {
 
-    private static EPProgressDialog progressDialog;
+    private static ProgressDialog progressDialog;
 
     public static JsonObjectRequest request(final Context context, String url, JSONObject requestObject, final OnJsonResponse onResponse, final boolean isProgressShow) throws InternetNotAvailableException {
         JsonObjectRequest jsObjRequest = null;
@@ -108,7 +104,7 @@ public class VolleyJsonRequest {
     }
 
     private static void showProgressDialog(Context context) {
-        progressDialog = new EPProgressDialog(context);
+        progressDialog = new ProgressDialog(context);
         progressDialog.setIndeterminate(true);
         progressDialog.setCancelable(false);
         progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
