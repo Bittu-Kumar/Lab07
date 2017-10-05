@@ -29,7 +29,7 @@ public class VolleyJsonRequest {
 
     private static ProgressDialog progressDialog;
 
-    public static JsonObjectRequest request(final Context context, String url, JSONObject requestObject, final OnJsonResponse onResponse, final boolean isProgressShow) throws InternetNotAvailableException {
+    public static JsonObjectRequest request(final Context context, String url, JSONObject requestObject, final OnJsonResponse onResponse, final boolean isProgressShow)  {
         JsonObjectRequest jsObjRequest = null;
         Log.v("VollyURL    --->>", url);
         if (CheckNetwork.isInternetAvailable(context)) {
@@ -50,12 +50,13 @@ public class VolleyJsonRequest {
                                 if (response != null) {
                                     Log.v("Vollyresponse", response.toString());
                                     try {
-                                        int respCode = response.getInt(AppConstants.KEY_RESP_CODE);
-                                        if (respCode == AppConstants.SUCCESS_DATA ||
-                                                respCode == AppConstants.SUCCESS_TRANSACTION)
+                                        if(response.getBoolean("status"))
+                                        {
                                             onResponse.responseReceived(response);
+                                        }
+
                                         else {
-                                            onResponse.errorReceived(respCode, response.getString(AppConstants.KEY_RESP_MSG));
+                                            onResponse.errorReceived(response.toString());
                                         }
                                     } catch (JSONException e) {
                                         Log.e(TAG, "onResponse: ", e);
@@ -72,22 +73,32 @@ public class VolleyJsonRequest {
 
                                 Log.e(TAG, "onErrorResponse: " + error.getMessage());
                                 if (error.networkResponse != null) {
-                                    onResponse.errorReceived(error.networkResponse.statusCode, "Server is Temporarily Down");
+                                    onResponse.errorReceived("Server is Temporarily Down");
                                 } else
                                     Toast.makeText(context, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }) {
+
+//                    @Override
+//                    public Map<String, String> getHeaders() throws AuthFailureError {
+//                        Map<String, String> headers = new HashMap<>();
+//                        headers.put("Content-Type", "application/json;charset=utf-8");
+//                        return headers;
+//                    }
+
                     @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
+                    protected Map<String, String> getParams() throws AuthFailureError {
                         return getHeadersForRequest();
                     }
+
                 };
             } catch (ArithmeticException e) {
                 Log.e("caught", "request: ", e);
             }
             VolleyRequestQueue.getInstance(context).addToRequestQueue(jsObjRequest);
         } else {
-            throw new InternetNotAvailableException(context.getString(R.string.internet_not_available));
+             Toast.makeText(context,"internet not available",Toast.LENGTH_SHORT).show();
+
         }
         return jsObjRequest;
     }
@@ -95,9 +106,11 @@ public class VolleyJsonRequest {
 
     private static Map<String, String> getHeadersForRequest() {
         HashMap<String, String> params = new HashMap<String, String>();
-        String creds = String.format("%s:%s", "partner01", "hjHSm518");
-        String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
-        params.put("Authorization", auth);
+//        String creds = String.format("%s:%s", "partner01", "hjHSm518");
+//        String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
+//        params.put("Authorization", auth);
+        params.put("id","00128");
+        params.put("password","user1");
        /* if (!TextUtils.isEmpty(mRequestBody))
             params.put("checksum", ChecksumGenerator.generateCheckSum(mRequestBody));*/
         return params;
@@ -117,7 +130,7 @@ public class VolleyJsonRequest {
     public interface OnJsonResponse {
         void responseReceived(JSONObject jsonObj);
 
-        void errorReceived(int code, String message);
+        void errorReceived(String message);
     }
 
 }
