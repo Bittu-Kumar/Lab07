@@ -11,6 +11,6 @@ public class AppConstants {
     ///////////////////////////////////////////////////////////////////////////
     // Response codes
     ///////////////////////////////////////////////////////////////////////////
-    public static final String host = "http://192.168.0.103:8080/Lab7-Server/";
+    public static final String host = "http://10.196.3.103:8080/Lab7-Server/";
     public static final String loginUrl = host + "Login";
 }

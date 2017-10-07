@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -31,6 +32,12 @@ public class VolleyJsonRequest {
 
     public static JsonObjectRequest request(final Context context, String url, JSONObject requestObject, final OnJsonResponse onResponse, final boolean isProgressShow)  {
         JsonObjectRequest jsObjRequest = null;
+        HashMap<String, String> params = new HashMap<String, String>();
+//        String creds = String.format("%s:%s", "partner01", "hjHSm518");
+//        String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
+//        params.put("Authorization", auth);
+        params.put("id","00128");
+        params.put("password","user1");
         Log.v("VollyURL    --->>", url);
         if (CheckNetwork.isInternetAvailable(context)) {
             try {
@@ -40,7 +47,7 @@ public class VolleyJsonRequest {
                 if (requestObject != null)
                     Log.v("Vollyrequest", requestObject.toString());
                 jsObjRequest = new JsonObjectRequest
-                        (url, requestObject, new Response.Listener<JSONObject>() {
+                        (Request.Method.GET,url, new JSONObject(params), new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
                                 if (progressDialog != null && progressDialog.isShowing()) {
