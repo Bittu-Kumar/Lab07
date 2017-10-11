@@ -35,7 +35,7 @@ public class Recycler_View_Adapter extends RecyclerView.Adapter<View_Holder> {
 
     @Override
     public void onBindViewHolder(View_Holder holder, int position) {
-        holder.postId.setText(list.get(position).postid);
+        holder.postuid.setText(list.get(position).uid);
         holder.postText.setText(list.get(position).postText);
         holder.comments.setText(list.get(position).comments);
 

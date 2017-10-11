@@ -18,9 +18,12 @@ import com.example.bittukumar.lab07.Utils.VolleyStringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    CookieManager cookieManager = new CookieManager();
 
     private Button login_button;
     private EditText usernameET,passwordET;
@@ -28,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        CookieHandler.setDefault(cookieManager);
 
     }
 
@@ -74,7 +79,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("id",username);
         params.put("password",password);
-        VolleyStringRequest.request(MainActivity.this,1, AppConstants.loginUrl,params, loginResp);
+
+
+        VolleyStringRequest.request(MainActivity.this, AppConstants.loginUrl,params, loginResp);
 
     }
     private VolleyStringRequest.OnStringResponse loginResp = new VolleyStringRequest.OnStringResponse() {

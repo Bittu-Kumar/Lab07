@@ -13,7 +13,7 @@ import com.example.bittukumar.lab07.R;
 //The adapters View Holder
 public class View_Holder extends RecyclerView.ViewHolder {
 
-    TextView postId;
+    TextView postuid;
     TextView postText;
     TextView comments;
 //    CardView cv;
@@ -24,7 +24,7 @@ public class View_Holder extends RecyclerView.ViewHolder {
 
     View_Holder(View itemView) {
         super(itemView);
-        postId = (TextView)itemView.findViewById(R.id.postNameTV);
+        postuid = (TextView)itemView.findViewById(R.id.postNameTV);
         postText = (TextView)itemView.findViewById(R.id.postPostTV);
         comments = (TextView)itemView.findViewById(R.id.commentTV);
 //        cv = (CardView) itemView.findViewById(R.id.cardView);

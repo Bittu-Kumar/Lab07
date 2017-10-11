@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -17,6 +18,8 @@ import com.example.bittukumar.lab07.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,10 +29,13 @@ import java.util.Map;
 public class VolleyStringRequest {
     private static ProgressDialog progressDialog;
 
-    public static void request(Context context, int method, String url, final Map<String,String> params, final OnStringResponse onResponse) {
+    public static void request(Context context, String url, final Map<String,String> params, final OnStringResponse onResponse) {
         if (progressDialog == null) {
             showProgressDialog(context);
         }
+//        CookieManager cookieManager =new CookieManager();
+//        CookieHandler.setDefault(cookieManager);
+        Log.v("VollyURL    --->>", url);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -38,19 +44,25 @@ public class VolleyStringRequest {
                             progressDialog.dismiss();
                             progressDialog = null;
                         }
-                        try {
-                            JSONObject jsonResponse = new JSONObject(response);
-                            if(jsonResponse.getBoolean("status"))
-                            {
-                                onResponse.responseReceived(response);
+                        if(response != null)
+                        {
+                            Log.v("Vollyresponse", response);
+                            try {
+                                JSONObject jsonResponse = new JSONObject(response);
+                                if(jsonResponse.getBoolean("status"))
+                                {
+                                    onResponse.responseReceived(response);
+                                }
+                                else
+                                {
+                                    onResponse.errorReceived(0,response);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            else
-                            {
-                                onResponse.errorReceived(0,response);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+
                         }
+
 
                     }
                 }, new Response.ErrorListener() {
@@ -76,11 +88,13 @@ public class VolleyStringRequest {
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> headers = new HashMap<String, String>();
+                super.getHeaders();
+                Map<String,String> headers =  new HashMap<String, String>();
                 headers.put("Content-Type","application/x-www-form-urlencoded");
 //                headers.put("Content-Type", "application/json;charset=utf-8");
                 return headers;
             }
+
         };
 
         VolleyRequestQueue.getInstance(context).addToRequestQueue(stringRequest);
@@ -100,7 +114,7 @@ public class VolleyStringRequest {
 
 
     public interface OnStringResponse {
-        void responseReceived(String resonse);
+        void responseReceived(String response);
 
         void errorReceived(int code, String message);
     }

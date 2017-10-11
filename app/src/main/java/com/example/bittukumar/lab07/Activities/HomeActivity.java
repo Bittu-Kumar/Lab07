@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.bittukumar.lab07.Fragments.ShowPostsFragment;
 import com.example.bittukumar.lab07.R;
 
 public class HomeActivity extends AppCompatActivity
@@ -49,8 +50,6 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        getSupportActionBar().setTitle("login");
 
     }
 
@@ -92,20 +91,17 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_home) {
+            getSupportActionBar().setTitle("Home");
+            changeFragment(new ShowPostsFragment());
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_my_posts) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_create_post) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_logout) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
