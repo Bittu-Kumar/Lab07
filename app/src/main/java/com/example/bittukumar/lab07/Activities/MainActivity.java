@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(MainActivity.this,obj.getString("data"),Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(MainActivity.this,HomeActivity.class);
                 startActivity(intent);
+                finish();
             } catch (JSONException e) {
                 e.printStackTrace();
             }

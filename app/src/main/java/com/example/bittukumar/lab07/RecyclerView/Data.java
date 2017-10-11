@@ -11,14 +11,16 @@ public class Data {
     public String comments;
     public String timestamp;
     public List<Comment> commentList;
+    public boolean more;
 
-    public Data(String uid, int postid, String postText, String comments, String timestamp, List<Comment> commentList) {
+    public Data(String uid, int postid, String postText, String comments, String timestamp, List<Comment> commentList,boolean more) {
         this.uid = uid;
         this.postid = postid;
         this.postText = postText;
         this.comments = comments;
         this.timestamp = timestamp;
         this.commentList = commentList;
+        this.more = more;
     }
 
 }

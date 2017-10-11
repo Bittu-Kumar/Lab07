@@ -10,10 +10,14 @@ import java.util.List;
 
 public class Util {
 
-    public static String getComment(List<Comment> commentList)
+    public static String getComment(List<Comment> commentList,boolean more)
     {
         String comment="";
-        for(int i=0;i<commentList.size();i++)
+        int n;
+        if(more)n=3;
+        else
+            n=commentList.size();
+        for(int i=0;i<n;i++)
         {
             comment+=commentList.get(i).name +" : " + commentList.get(i).text+"\n";
         }

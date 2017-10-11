@@ -38,6 +38,7 @@ public class Recycler_View_Adapter extends RecyclerView.Adapter<View_Holder> {
         holder.postuid.setText(list.get(position).uid);
         holder.postText.setText(list.get(position).postText);
         holder.comments.setText(list.get(position).comments);
+        if(list.get(position).more)holder.moreTV.setVisibility(View.VISIBLE);
 
 //        TextView tv = new TextView(holder.ll.getContext());
 //        tv.setText("bittu");
@@ -71,12 +72,10 @@ public class Recycler_View_Adapter extends RecyclerView.Adapter<View_Holder> {
         list.remove(position);
         notifyItemRemoved(position);
     }
-    public void change(String data,int position)
+    public void refresh(List<Data>data)
     {
-        Data d = list.get(position);
-//        d.description = data;
-        list.set(position,d);
-        notifyItemChanged(position);
+        list = data;
+        notifyDataSetChanged();
     }
 
 //    public void animate(RecyclerView.ViewHolder viewHolder) {

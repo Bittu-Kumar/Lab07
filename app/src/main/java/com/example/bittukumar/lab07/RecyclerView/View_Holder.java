@@ -16,6 +16,7 @@ public class View_Holder extends RecyclerView.ViewHolder {
     TextView postuid;
     TextView postText;
     TextView comments;
+    TextView moreTV;
 //    CardView cv;
 //    TextView title;
 //    TextView description;
@@ -27,6 +28,7 @@ public class View_Holder extends RecyclerView.ViewHolder {
         postuid = (TextView)itemView.findViewById(R.id.postNameTV);
         postText = (TextView)itemView.findViewById(R.id.postPostTV);
         comments = (TextView)itemView.findViewById(R.id.commentTV);
+        moreTV = (TextView)itemView.findViewById(R.id.moreTV);
 //        cv = (CardView) itemView.findViewById(R.id.cardView);
 //        title = (TextView) itemView.findViewById(R.id.title);
 //        description = (TextView) itemView.findViewById(R.id.description);

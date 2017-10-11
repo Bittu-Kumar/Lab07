@@ -5,13 +5,22 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.bittukumar.lab07.Activities.HomeActivity;
+import com.example.bittukumar.lab07.Activities.MainActivity;
 import com.example.bittukumar.lab07.R;
 import com.example.bittukumar.lab07.RecyclerView.Comment;
+import com.example.bittukumar.lab07.RecyclerView.CustomRVItemTouchListener;
 import com.example.bittukumar.lab07.RecyclerView.Data;
+import com.example.bittukumar.lab07.RecyclerView.RecyclerViewItemClickListener;
 import com.example.bittukumar.lab07.RecyclerView.Recycler_View_Adapter;
 import com.example.bittukumar.lab07.Utils.AppConstants;
 import com.example.bittukumar.lab07.Utils.Util;
@@ -27,6 +36,9 @@ import java.util.List;
 
 
 public class ShowPostsFragment extends Fragment {
+    ImageView sendcomment;
+    TextView moreTV;
+    EditText commentET;
     RecyclerView recyclerView;
     private Recycler_View_Adapter adapter;
     List<Data> data;
@@ -48,50 +60,83 @@ public class ShowPostsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         data = new ArrayList<>();
         getData();
+        recyclerView.addOnItemTouchListener(new CustomRVItemTouchListener(getActivity(), recyclerView, new RecyclerViewItemClickListener() {
+            @Override
+            public void onClick(final View view, final int position) {
+                sendcomment = (ImageView) view.findViewById(R.id.sendIV);
+                sendcomment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        commentET = (EditText)view.findViewById(R.id.commentET);
+                        String comment = commentET.getText().toString();
+                        if(TextUtils.isEmpty(comment))
+                        {
+                            commentET.requestFocus();
+                            commentET.setError("Please enter the comment");
+                            return;
+                        }
+                        commentET.setText("");
+                        postComment(comment,position);
+                    }
+                });
+
+                moreTV = (TextView)view.findViewById(R.id.moreTV);
+                moreTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Data data1 = data.get(position);
+                        data1.more =false;
+                        data1.comments = Util.getComment(data1.commentList,false);
+                        data.set(position,data1);
+                        moreTV.setVisibility(View.GONE);
+                        adapter.refresh(data);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
 
     }
 
-    private void getData() {
 
+
+    private void getData() {
         HashMap<String, String> params = new HashMap<String, String>();
         VolleyStringRequest.request(getActivity(), AppConstants.SeePosts,params,seePostsResponse);
     }
     private VolleyStringRequest.OnStringResponse seePostsResponse = new VolleyStringRequest.OnStringResponse() {
         @Override
         public void responseReceived(String response) {
-            try {
-                JSONObject jsonData = new JSONObject(response);
-                JSONArray postarray = jsonData.getJSONArray("data");
-                String postuid,text,timestamp,comment;
-                int postId;
-                String cuid,cname,ctext,ctimestamp;
-                for (int i = 0;i<postarray.length();i++)
-                {
-                    JSONObject post = postarray.getJSONObject(i);
-                    postuid = post.getString("uid");
-                    text = post.getString("text");
-                    postId = post.getInt("postid");
-                    timestamp = post.getString("timestamp");
-                    List<Comment> commentList = new ArrayList<>();
-                    JSONArray commentarray = post.getJSONArray("Comment");
-                    for(int j=0;j<commentarray.length();j++)
-                    {
-                        JSONObject commentobject = commentarray.getJSONObject(j);
-                        cuid = commentobject.getString("uid");
-                        cname = commentobject.getString("name");
-                        ctext = commentobject.getString("text");
-                        ctimestamp = commentobject.getString("timestamp");
-                        commentList.add(new Comment(cuid,cname,ctext,ctimestamp));
-                    }
-                    comment = Util.getComment(commentList);
-                    data.add(new Data(postuid,postId,text,comment,timestamp,commentList));
-                }
-                adapter = new Recycler_View_Adapter(data,getActivity());
-                recyclerView.setAdapter(adapter);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            data = HomeActivity.parseData(response);
+            adapter = new Recycler_View_Adapter(data,getActivity());
+            recyclerView.setAdapter(adapter);
+        }
+        @Override
+        public void errorReceived(int code, String message) {
 
+        }
+    };
+
+
+    private void postComment(String comment, int position) {
+        int postid = data.get(position).postid;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("content",comment);
+        params.put("postid",Integer.toString(postid));
+
+        VolleyStringRequest.request(getActivity(), AppConstants.newComment,params, commentResp);
+    }
+    private VolleyStringRequest.OnStringResponse commentResp = new VolleyStringRequest.OnStringResponse()
+    {
+
+        @Override
+        public void responseReceived(String response) {
+            refreshData();
         }
 
         @Override
@@ -100,7 +145,22 @@ public class ShowPostsFragment extends Fragment {
         }
     };
 
+    private void refreshData() {
+        HashMap<String, String> params = new HashMap<String, String>();
+        VolleyStringRequest.request(getActivity(), AppConstants.SeePosts,params,refreshPostsResponse);
+    }
 
+    private VolleyStringRequest.OnStringResponse refreshPostsResponse = new VolleyStringRequest.OnStringResponse() {
+        @Override
+        public void responseReceived(String response) {
+            data = HomeActivity.parseData(response);
+            adapter.refresh(data);
+        }
+        @Override
+        public void errorReceived(int code, String message) {
+
+        }
+    };
 
 
 }
