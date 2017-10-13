@@ -10,4 +10,11 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="show_posts_type">showpoststype</string>
+    <string name="show_post_uid">showpostuid</string>
+    <string name="unfollow_text">Unfollow</string>
+    <string name="search_using_uid_name_or_email">search using uid,name or email...</string>
+    <string name="user_posts">User Posts</string>
+    <string name="follow">follow</string>
+    <string name="cancel">Cancel</string>
 </resources>

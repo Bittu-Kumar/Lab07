@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,11 +19,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.bittukumar.lab07.Fragments.CreatePostFragment;
+import com.example.bittukumar.lab07.Fragments.SearchFragment;
 import com.example.bittukumar.lab07.Fragments.ShowPostsFragment;
 import com.example.bittukumar.lab07.R;
 import com.example.bittukumar.lab07.RecyclerView.Comment;
 import com.example.bittukumar.lab07.RecyclerView.Data;
 import com.example.bittukumar.lab07.RecyclerView.Recycler_View_Adapter;
+import com.example.bittukumar.lab07.RecyclerViewSearch.SData;
 import com.example.bittukumar.lab07.Utils.AppConstants;
 import com.example.bittukumar.lab07.Utils.Util;
 import com.example.bittukumar.lab07.Utils.VolleyStringRequest;
@@ -38,6 +41,9 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FragmentManager manager;
+    public static int SHOWPOSTS = 1;
+    public static int MYPOSTS = 2;
+    public static int USERPOSTS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,15 +55,6 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getSupportActionBar().setTitle("Create Post");
-                changeFragment(new CreatePostFragment());
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -68,7 +65,9 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         getSupportActionBar().setTitle("Home");
-        changeFragment(new ShowPostsFragment());
+        Bundle args = new Bundle();
+        args.putInt(getString(R.string.show_posts_type),SHOWPOSTS);
+        changeFragmentWithBundle(args,new ShowPostsFragment());
     }
 
     @Override
@@ -110,16 +109,31 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+
             getSupportActionBar().setTitle("Home");
-            changeFragment(new ShowPostsFragment());
+            Bundle args = new Bundle();
+            args.putInt(getString(R.string.show_posts_type),SHOWPOSTS);
+            changeFragmentWithBundle(args,new ShowPostsFragment());
 
         } else if (id == R.id.nav_my_posts) {
+
+            getSupportActionBar().setTitle("My Posts");
+            Bundle args = new Bundle();
+            args.putInt(getString(R.string.show_posts_type),MYPOSTS);
+            changeFragmentWithBundle(args,new ShowPostsFragment());
 
         } else if (id == R.id.nav_create_post) {
             getSupportActionBar().setTitle("Create Post");
             changeFragment(new CreatePostFragment());
 
-        } else if (id == R.id.nav_logout) {
+
+        }
+        else if (id == R.id.nav_search) {
+            getSupportActionBar().setTitle("Search User");
+            changeFragment(new SearchFragment());
+
+        }
+        else if (id == R.id.nav_logout) {
             logout();
 
         }
@@ -155,6 +169,17 @@ public class HomeActivity extends AppCompatActivity
             transaction.add(R.id.content_frame, fragment);
         transaction.commitAllowingStateLoss();
     }
+    public void changeFragmentWithBundle(Bundle args,Fragment fragment)
+    {
+        fragment.setArguments(args);
+        FragmentTransaction transaction = manager.beginTransaction();
+        Fragment tmpFragment = manager.findFragmentById(R.id.content_frame);
+        if (tmpFragment != null)
+            transaction.replace(R.id.content_frame, fragment);
+        else
+            transaction.add(R.id.content_frame, fragment);
+        transaction.commitAllowingStateLoss();
+    }
 
     public static List<Data> parseData(String response)
     {
@@ -164,11 +189,10 @@ public class HomeActivity extends AppCompatActivity
             JSONArray postarray = jsonData.getJSONArray("data");
             String postuid,text,timestamp,comment;
             int postId;
-            boolean more;
             String cuid,cname,ctext,ctimestamp;
-            for (int i = postarray.length()-1;i>=0;i--)
+            for (int i = 0;i<postarray.length();i++)
             {
-                more=false;
+               boolean more=false;
                 JSONObject post = postarray.getJSONObject(i);
                 postuid = post.getString("uid");
                 text = post.getString("text");
@@ -187,12 +211,32 @@ public class HomeActivity extends AppCompatActivity
                 }
                 if (commentList.size()>3)more=true;
                 comment = Util.getComment(commentList,more);
+                Log.v("more post cmntlstsize->", ": "+more+"  "+text +" " +commentList.size());
                 data.add(new Data(postuid,postId,text,comment,timestamp,commentList,more));
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return data;
+    }
+
+    public static List<SData> parseSearchData(String response) {
+        List<SData> data = new ArrayList<>();
+        try {
+            JSONObject jsonData = new JSONObject(response);
+            JSONArray dataArray = jsonData.getJSONArray("data");
+            dataArray = dataArray.getJSONArray(0);
+            for (int i=0;i<dataArray.length();i++)
+            {
+                JSONObject Sdata = dataArray.getJSONObject(i);
+                data.add(new SData(Sdata.getString("uid"),Sdata.getString("name"),Sdata.getString("email")));
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return data;
     }
 }

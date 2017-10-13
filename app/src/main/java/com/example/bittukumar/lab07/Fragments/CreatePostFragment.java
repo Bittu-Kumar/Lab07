@@ -69,7 +69,9 @@ public class CreatePostFragment extends Fragment {
         @Override
         public void responseReceived(String response) {
             homeActivity.getSupportActionBar().setTitle("Home");
-            homeActivity.changeFragment(new ShowPostsFragment());
+            Bundle args = new Bundle();
+            args.putInt(getString(R.string.show_posts_type),homeActivity.SHOWPOSTS);
+            homeActivity.changeFragmentWithBundle(args,new ShowPostsFragment());
 
 
         }

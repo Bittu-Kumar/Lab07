@@ -66,7 +66,7 @@ public class Recycler_View_Adapter extends RecyclerView.Adapter<View_Holder> {
         notifyItemInserted(position);
 
     }
-    // Remove a RecyclerView item containing the Data object
+    // Remove a RecyclerView item containing the SData object
     public void remove(int position) {
 //        int position = list.indexOf(data);
         list.remove(position);

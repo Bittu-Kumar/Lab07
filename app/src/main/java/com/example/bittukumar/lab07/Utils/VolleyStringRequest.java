@@ -7,12 +7,14 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.bittukumar.lab07.Activities.MainActivity;
 import com.example.bittukumar.lab07.R;
 
 import org.json.JSONException;
@@ -29,7 +31,7 @@ import java.util.Map;
 public class VolleyStringRequest {
     private static ProgressDialog progressDialog;
 
-    public static void request(Context context, String url, final Map<String,String> params, final OnStringResponse onResponse) {
+    public static void request(final Context context, String url, final Map<String,String> params, final OnStringResponse onResponse) {
         if (progressDialog == null) {
             showProgressDialog(context);
         }
@@ -55,6 +57,7 @@ public class VolleyStringRequest {
                                 }
                                 else
                                 {
+                                    Toast.makeText(context,jsonResponse.getString("message"),Toast.LENGTH_LONG).show();
                                     onResponse.errorReceived(0,response);
                                 }
                             } catch (JSONException e) {

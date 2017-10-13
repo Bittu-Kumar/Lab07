@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -15,9 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.bittukumar.lab07.Activities.HomeActivity;
-import com.example.bittukumar.lab07.Activities.MainActivity;
 import com.example.bittukumar.lab07.R;
-import com.example.bittukumar.lab07.RecyclerView.Comment;
 import com.example.bittukumar.lab07.RecyclerView.CustomRVItemTouchListener;
 import com.example.bittukumar.lab07.RecyclerView.Data;
 import com.example.bittukumar.lab07.RecyclerView.RecyclerViewItemClickListener;
@@ -25,10 +22,6 @@ import com.example.bittukumar.lab07.RecyclerView.Recycler_View_Adapter;
 import com.example.bittukumar.lab07.Utils.AppConstants;
 import com.example.bittukumar.lab07.Utils.Util;
 import com.example.bittukumar.lab07.Utils.VolleyStringRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,10 +35,21 @@ public class ShowPostsFragment extends Fragment {
     RecyclerView recyclerView;
     private Recycler_View_Adapter adapter;
     List<Data> data;
+    int showpoststype;
+    String showpostuid;
+    String showposturl;
+    HashMap<String, String> paramsforshowposts;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        showpoststype = getArguments().getInt(getString(R.string.show_posts_type));
+        if(showpoststype==HomeActivity.USERPOSTS)
+        {
+            showpostuid = getArguments().getString(getString(R.string.show_post_uid));
+
+        }
         return inflater.inflate(R.layout.fragment_show_posts, container, false);
     }
 
@@ -58,6 +62,20 @@ public class ShowPostsFragment extends Fragment {
     private void init() {
         recyclerView = (RecyclerView)getActivity().findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        paramsforshowposts = new HashMap<String, String>();
+        if (showpoststype==HomeActivity.SHOWPOSTS)
+        {
+            showposturl = AppConstants.SeePosts;
+        }
+        else if(showpoststype == HomeActivity.MYPOSTS)
+        {
+            showposturl = AppConstants.Myposts;
+        }
+        else if (showpoststype == HomeActivity.USERPOSTS)
+        {
+            paramsforshowposts.put("uid",showpostuid);
+            showposturl = AppConstants.userPosts;
+        }
         data = new ArrayList<>();
         getData();
         recyclerView.addOnItemTouchListener(new CustomRVItemTouchListener(getActivity(), recyclerView, new RecyclerViewItemClickListener() {
@@ -106,8 +124,7 @@ public class ShowPostsFragment extends Fragment {
 
 
     private void getData() {
-        HashMap<String, String> params = new HashMap<String, String>();
-        VolleyStringRequest.request(getActivity(), AppConstants.SeePosts,params,seePostsResponse);
+        VolleyStringRequest.request(getActivity(),showposturl,paramsforshowposts,seePostsResponse);
     }
     private VolleyStringRequest.OnStringResponse seePostsResponse = new VolleyStringRequest.OnStringResponse() {
         @Override
@@ -146,8 +163,7 @@ public class ShowPostsFragment extends Fragment {
     };
 
     private void refreshData() {
-        HashMap<String, String> params = new HashMap<String, String>();
-        VolleyStringRequest.request(getActivity(), AppConstants.SeePosts,params,refreshPostsResponse);
+        VolleyStringRequest.request(getActivity(),showposturl,paramsforshowposts,refreshPostsResponse);
     }
 
     private VolleyStringRequest.OnStringResponse refreshPostsResponse = new VolleyStringRequest.OnStringResponse() {
